@@ -61,16 +61,33 @@ namespace Systematic.NUnit.Util
         public int DefaultIndex { get; set; }
         public int TypeIndex { get; set; }
 
+        /// <summary>
+        /// Gets or Sets a value in the property bag.
+        /// <br/> - Setting the value cals the <see cref="SetValue"/> method with the value and key provided.
+        /// <br/> - Getting the value cals the <see cref="Replace(string)"/> method for the value stored for the key provided.
+        /// </summary>
+        /// <remarks>
+        /// Because getting the value results in a call to <see cref="Replace(string)"/>, the value returned may not be the same as the value inserted, instead it is the
+        /// resolved value, if value occurences is not present in the string they will be ignored and remain as occurenses.
+        /// </remarks>
         public object this[string key]
         {
             get { return values[key]; }
             set { values[key] = value; }
         }
 
+        /// <summary>
+        /// Creates a new instance of the property bag.
+        /// </summary>
         public AdvPropertyBag()
             : this("@(", ")")
         { }
 
+        /// <summary>
+        /// reates a new instance of the property bag with a custom start and end pattern.
+        /// </summary>
+        /// <param name="start">start pattern for a property, defualt is '@('</param>
+        /// <param name="end">end pattern for a property, defualt is ')'</param>
         public AdvPropertyBag(string start, string end)
         {
             startPattern = start;
@@ -80,6 +97,15 @@ namespace Systematic.NUnit.Util
             TypeIndex = 3;
         }
 
+        /// <summary>
+        /// Replaces all known occurences in the given string with values from the property bag.
+        /// <br/>The format used for occurences of values is defined by the start and end pattern, default is '$(valueName)'.
+        /// </summary>
+        /// <param name="input">The string for which to replace all property value occurences.</param>
+        /// <exception cref="ArgumentException">The input had a parameter that was not registered in the PropertyBag</exception>
+        /// <remarks>
+        /// Calling this method is the equivalent of calling <see cref="Replace(string,bool)"/> with <paramref name="input"/> and 'throwsWhenMissingParameters' set to true.
+        /// </remarks>
         public string Replace(string input)
         {
             Parameter param;
